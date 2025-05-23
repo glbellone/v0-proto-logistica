@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 interface Remito {
@@ -13,6 +14,7 @@ interface Remito {
 }
 
 export default function Remitos() {
+  const router = useRouter()
   const [remitos, setRemitos] = useState<Remito[]>([
     {
       id: 1,
@@ -34,6 +36,10 @@ export default function Remitos() {
     setRemitos(remitos.filter((remito) => remito.id !== id))
   }
 
+  const handleRemitoClick = (id: number) => {
+    router.push(`/remitos/${id}`)
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -45,7 +51,11 @@ export default function Remitos() {
 
       <div className="bg-gray-200 rounded-lg p-6">
         {remitos.map((remito) => (
-          <div key={remito.id} className="bg-white rounded-md p-4 mb-4">
+          <div
+            key={remito.id}
+            className="bg-white rounded-md p-4 mb-4 cursor-pointer hover:bg-gray-50"
+            onClick={() => handleRemitoClick(remito.id)}
+          >
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-medium">Remito: {remito.numero}</p>
@@ -58,11 +68,14 @@ export default function Remitos() {
                   variant="destructive"
                   size="sm"
                   className="bg-green-700 hover:bg-green-800 text-white"
-                  onClick={() => handleDelete(remito.id)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDelete(remito.id)
+                  }}
                 >
                   Borrar
                 </Button>
-                <Link href={`/remitos/editar/${remito.id}`}>
+                <Link href={`/remitos/editar/${remito.id}`} onClick={(e) => e.stopPropagation()}>
                   <Button variant="outline" size="sm" className="bg-green-700 hover:bg-green-800 text-white">
                     Editar
                   </Button>
